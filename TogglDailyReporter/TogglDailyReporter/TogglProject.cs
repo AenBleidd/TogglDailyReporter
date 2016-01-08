@@ -1,18 +1,36 @@
-﻿using System;
-
-using Toggl;
+﻿using Toggl;
 
 namespace TogglDailyReporter
 {
-  class TogglProject
+  public class TogglProject
   {
     private Project project;
-    private DateTime date;
+    private string name;
+    private int? id;
+    private bool isChecked;
 
-    public TogglProject(Project project, DateTime date)
+    public string Name
+    {
+      get { return name; }
+      set { name = value; }
+    }
+    public int? Id
+    {
+      get { return id; }
+      set { id = value; }
+    }
+    public bool IsChecked
+    {
+      get { return isChecked; }
+      set { isChecked = value; }
+    }
+
+    public TogglProject(Project project)
     {
       this.project = project;
-      this.date = date;
+      name = project.Name;
+      id = project.Id;
+      isChecked = false;
     }
   }
 }

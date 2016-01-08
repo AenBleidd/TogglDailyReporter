@@ -5,9 +5,12 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:TogglDailyReporter"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
+             d:DesignHeight="300" 
+             d:DesignWidth="300"
+             x:Name="This"
+             >
   <Grid
-    Margin="0, 5, 0, 0"
+    Margin="5, 5, 5, 5"
     >
     <Grid.ColumnDefinitions>
       <ColumnDefinition
@@ -18,6 +21,7 @@
         />
     </Grid.ColumnDefinitions>
     <Grid 
+      Margin="0, 0, 5, 0"
       Grid.Column="0"
       >
       <Grid.RowDefinitions>
@@ -30,6 +34,9 @@
         <RowDefinition
           Height="*"
           />
+        <RowDefinition
+          Height="auto"
+          />
       </Grid.RowDefinitions>
       <Grid 
         Grid.Row="0"
@@ -41,31 +48,128 @@
           <ColumnDefinition
             Width="*"
             />
-          <ColumnDefinition
-            Width="auto"
-            />
         </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+          <RowDefinition
+            Height="auto"
+            />
+          <RowDefinition
+            Height="auto"
+            />
+          <RowDefinition
+            Height="auto"
+            />
+        </Grid.RowDefinitions>
         <Label
           Grid.Column="0"
-          Content="Work day:"
+          Grid.Row="1"
+          Content="Api Token:"
           />
         <TextBox
           Grid.Column="1"
-          Width="100"
+          Grid.Row="1"
+          Height="20"
+          Name="edtApiKey"
+          TextAlignment="Center"
+          Text="{Binding ApiToken, Mode=TwoWay}"
+         />
+        <Button
+          Grid.Column="1"
+          Grid.Row="2"
+          Content="Log in"
+          Name="btnLogin"
+          Command="{Binding btnLoginClick}"
+          CommandParameter="{Binding ElementName=This}"
+          />
+        <Label
+          Grid.Column="0"
+          Grid.Row="0"
+          Content="Work hours:"
+          />
+        <TextBox
+          Grid.Column="1"
+          Grid.Row="0"
           Height="20"
           Name="edtWorkHours"
           TextAlignment="Center"
-          Text="{Binding WorkHours}"
+          Text="{Binding WorkHours, Mode=TwoWay}"
          />
-        <Label
-          Grid.Column="2"
-          Content="hour(s)"
-          />
       </Grid>
       <Calendar
-        Grid.Row="1"
-        SelectedDate="{Binding SelectedDate}"
+        Margin="0, 5, 0, 0"
+        Grid.Row="3"
+        SelectedDate="{Binding SelectedDate, Mode=TwoWay}"
         />
+      <Label
+        Grid.Row="1"
+        Content="Projects"
+        HorizontalContentAlignment="Center"
+      />
+      <ListView
+        Grid.Row="2"
+        Name="lstProjects"
+        ItemsSource="{Binding TogglProjects, Mode=TwoWay}"
+        >
+        <ListView.ItemTemplate>
+          <DataTemplate>
+            <CheckBox
+              Content="{Binding Name, Mode=TwoWay}"
+              IsChecked="{Binding IsChecked, Mode=TwoWay}"
+              />
+          </DataTemplate>
+        </ListView.ItemTemplate>
+      </ListView>
+    </Grid>
+    <Grid
+      Margin="5, 0, 0, 0"
+      Grid.Column="1"
+      >
+      <ListView
+        ItemsSource="{Binding TogglTasks, Mode=TwoWay}"
+        HorizontalContentAlignment="Stretch"
+        >
+        <ListView.ItemTemplate>
+          <DataTemplate>
+            <Grid>
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition
+                  Width="*"
+                  />
+                <ColumnDefinition
+                  Width="auto"
+                  />
+                <ColumnDefinition
+                  Width="auto"
+                  />
+                <ColumnDefinition
+                  Width="auto"
+                  />
+              </Grid.ColumnDefinitions>
+              <CheckBox
+                Grid.Column="0"
+                Content="{Binding Name, Mode=TwoWay}"
+                IsChecked="{Binding IsChecked, Mode=TwoWay}"
+                VerticalAlignment="Center"
+                />
+              <Label
+                Grid.Column="1"
+                Content="{Binding ProjectName, Mode=TwoWay}"
+                VerticalAlignment="Center"
+                />
+              <Label
+                Grid.Column="2"
+                Content="{Binding Duration, Mode=TwoWay}"
+                VerticalAlignment="Center"
+                />
+              <Label
+                Grid.Column="3"
+                Content="{Binding Adjusted, Mode=TwoWay}"
+                VerticalAlignment="Center"
+                />
+            </Grid>
+          </DataTemplate>
+        </ListView.ItemTemplate>
+      </ListView>
     </Grid>
   </Grid>
 </UserControl>

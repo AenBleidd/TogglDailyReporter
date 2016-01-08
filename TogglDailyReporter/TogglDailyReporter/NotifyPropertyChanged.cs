@@ -6,7 +6,7 @@ namespace TogglDailyReporter
   {
     public event PropertyChangedEventHandler PropertyChanged;
 
-    protected void RaisePropertyChangedEvent(string propertyName)
+    protected void OnPropertyChanged(string propertyName)
     {
       var handler = PropertyChanged;
       if (handler != null)
