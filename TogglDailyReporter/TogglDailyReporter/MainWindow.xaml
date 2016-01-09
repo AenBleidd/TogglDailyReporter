@@ -8,8 +8,8 @@
         xmlns:ViewModel="clr-namespace:TogglDailyReporter"
         mc:Ignorable="d"
         Title="Toggl Daily Reporter" 
-        Height="350" 
-        Width="525"
+        Height="500" 
+        Width="720"
         WindowStartupLocation="CenterScreen"
         WindowState="Maximized"
         >

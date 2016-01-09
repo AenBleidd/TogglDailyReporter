@@ -85,6 +85,11 @@ namespace TogglDailyReporter
       }
       Adjusted = Duration;
       isChecked = true;
+      Adjust();
+    }
+    public void Adjust(long seconds = 30 * 60)
+    {
+      Adjusted += (seconds - Adjusted % seconds);
     }
 
   }

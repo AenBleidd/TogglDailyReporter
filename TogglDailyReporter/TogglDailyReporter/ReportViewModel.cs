@@ -1,8 +1,9 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Windows;
 using System.Windows.Input;
-using Toggl;
 using Toggl.QueryObjects;
 
 namespace TogglDailyReporter
@@ -18,12 +19,24 @@ namespace TogglDailyReporter
     public ReportViewModel()
     {
       btnLoginClick = new RelayCommand(Login);
+      btnCopyToClipboardClick = new RelayCommand(CopyToClipboard);
+      btnSaveAsCSVClick = new RelayCommand(SaveAsCSV);
       if (TogglUser.Instance.ApiToken != string.Empty)
         toggl = new Toggl.Toggl(TogglUser.Instance.ApiToken);
       GetReport(true);
     }
 
     public ICommand btnLoginClick
+    {
+      get;
+      private set;
+    }
+    public ICommand btnCopyToClipboardClick
+    {
+      get;
+      private set;
+    }
+    public ICommand btnSaveAsCSVClick
     {
       get;
       private set;
@@ -78,7 +91,7 @@ namespace TogglDailyReporter
       get { return TogglTask.ConvertTime(totalTimeAdjusted); }
     }
 
-    public void Login(object sender)
+    private void Login(object sender)
     {
       if (ApiToken == string.Empty)
       {
@@ -185,6 +198,35 @@ namespace TogglDailyReporter
         if (t.IsChecked)
           totalTimeAdjusted += t.Adjusted;
       OnPropertyChanged("TotalTimeAdjustedStr");
+    }
+    private string GetReport()
+    {
+      var str = string.Empty;
+      foreach (var t in togglTasks)
+        if (t.IsChecked)
+          str += t.Name + ": " + t.AdjustedStr + Environment.NewLine;
+      str += "Total: " + TotalTimeAdjustedStr + Environment.NewLine;
+      return str;
+    }
+    private string GetReportCSV()
+    {
+      var str = string.Empty;
+      foreach (var t in togglTasks)
+        if (t.IsChecked)
+          str += t.Name + ';' + t.AdjustedStr + ';' + Environment.NewLine;
+      str += "Total;" + TotalTimeAdjustedStr + ';' + Environment.NewLine;
+      return str;
+    }
+    private void CopyToClipboard(object sender)
+    {
+      Clipboard.SetText(GetReport());
+    }
+    private void SaveAsCSV(object sender)
+    {
+      var dlg = new SaveFileDialog();
+      dlg.Filter = "CSV Files (*.csv)|*.csv|All Files (*.*)|*.*";
+      if (dlg.ShowDialog() == true)
+        File.WriteAllText(dlg.FileName, GetReportCSV());
     }
   }
 }

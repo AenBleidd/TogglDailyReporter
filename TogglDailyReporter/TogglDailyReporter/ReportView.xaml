@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:TogglDailyReporter"
              mc:Ignorable="d" 
              d:DesignHeight="300" 
-             d:DesignWidth="300"
+             d:DesignWidth="500"
              x:Name="This"
              >
   <Grid
@@ -215,6 +215,7 @@
           <Label
             Grid.Column="1"
             Grid.Row="0"
+            HorizontalContentAlignment="Right"
             Content="{Binding TotalTimeStr, Mode=OneWay}"
             />
           <Label
@@ -226,7 +227,35 @@
           <Label
             Grid.Column="1"
             Grid.Row="1"
+            HorizontalContentAlignment="Right"
             Content="{Binding TotalTimeAdjustedStr}"
+            />
+          <Grid
+            Grid.Column="0"
+            Grid.Row="3"
+            Margin="0, 0, 5, 0"
+            >
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition
+                Width="*"
+                />
+              <ColumnDefinition
+                Width="auto"
+                />
+            </Grid.ColumnDefinitions>
+            <Button
+            Grid.Column="1"
+            Content="Save as CSV"
+            Command="{Binding btnSaveAsCSVClick}"
+            CommandParameter="{Binding ElementName=This}"
+            />
+          </Grid>          
+          <Button
+            Grid.Column="1"
+            Grid.Row="3"
+            Content="Copy to clipboard"
+            Command="{Binding btnCopyToClipboardClick}"
+            CommandParameter="{Binding ElementName=This}"
             />
         </Grid>
       </Grid>
