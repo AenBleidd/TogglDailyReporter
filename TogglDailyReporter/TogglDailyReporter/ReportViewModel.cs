@@ -12,6 +12,8 @@ namespace TogglDailyReporter
     private Toggl.Toggl toggl = null;
     private List<TogglProject> togglProjects = null;
     private List<TogglTask> togglTasks = null;
+    private long totalTime = 0;
+    private long totalTimeAdjusted = 0;
 
     public ReportViewModel()
     {
@@ -47,7 +49,6 @@ namespace TogglDailyReporter
       get { return TogglUser.Instance.ApiToken; }
       set { TogglUser.Instance.ApiToken = value; }
     }
-
     public List<TogglProject> TogglProjects
     {
       get { return togglProjects; }
@@ -57,6 +58,24 @@ namespace TogglDailyReporter
     {
       get { return togglTasks; }
       set { togglTasks = value; }
+    }
+    public long TotalTime
+    {
+      get { return totalTime; }
+      set { totalTime = value; }
+    }
+    public long TotalTimeAdjusted
+    {
+      get { return totalTimeAdjusted; }
+      set { totalTimeAdjusted = value; }
+    }
+    public string TotalTimeStr
+    {
+      get { return TogglTask.ConvertTime(totalTime); }
+    }
+    public string TotalTimeAdjustedStr
+    {
+      get { return TogglTask.ConvertTime(totalTimeAdjusted); }
     }
 
     public void Login(object sender)
@@ -69,7 +88,6 @@ namespace TogglDailyReporter
       toggl = new Toggl.Toggl(ApiToken);
       GetReport(false);
     }
-
     private void GetProjects(bool bSilent = false)
     {
       try
@@ -79,7 +97,7 @@ namespace TogglDailyReporter
           var projects = toggl.Project.List();
           togglProjects = new List<TogglProject>();
           foreach (var p in projects)
-            togglProjects.Add(new TogglProject(p));
+            togglProjects.Add(new TogglProject(p, this));
           togglProjects.Sort((c1, c2) => c1.Name.CompareTo(c2.Name));
           OnPropertyChanged("TogglProjects");
         }
@@ -90,8 +108,7 @@ namespace TogglDailyReporter
           MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
       }
     }
-
-    private void GetTasks(bool bSilent = false)
+    public void GetTasks(bool bSilent = false)
     {
       try
       {
@@ -102,26 +119,40 @@ namespace TogglDailyReporter
           p.EndDate = SelectedDate.AddDays(1);
           var e = toggl.TimeEntry.List(p);
           var d = new Dictionary<string, string>();
+          var pr = new List<long>();
           foreach (var t in e)
           {
             if (t.Description != string.Empty && !d.ContainsKey(t.Description))
             {
               string project = string.Empty;
+              bool bChecked = false;
               foreach (var i in togglProjects)
               {
                 if (i.Id == t.ProjectId)
                 {
                   project = i.Name;
+                  bChecked = i.IsChecked;
                   break;
                 }
               }
-              d.Add(t.Description, project);
+              if (bChecked)
+                d.Add(t.Description, project);
+              if (!pr.Contains(Convert.ToInt64(t.ProjectId)))
+                pr.Add(Convert.ToInt64(t.ProjectId));
             }
           }
           togglTasks = new List<TogglTask>();
           foreach (var t in d)
-            togglTasks.Add(new TogglTask(t.Key, t.Value, e));
+            togglTasks.Add(new TogglTask(t.Key, t.Value, e, this));
+          togglTasks.Sort((c1, c2) => c1.Name.CompareTo(c2.Name));
 
+          foreach (var t in togglProjects.ToArray())
+          {
+            if (!pr.Contains(Convert.ToInt64((t.Id))))
+              togglProjects.Remove(t);
+          }
+          GetTotalTime();
+          GetTotalTimeAdjusted();
           OnPropertyChanged("TogglTasks");
           OnPropertyChanged("TogglProjects");
         }
@@ -132,12 +163,28 @@ namespace TogglDailyReporter
           MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
       }
 }
-
     private void GetReport(bool bSilent = false)
     {
       GetProjects(bSilent);
       GetTasks(bSilent);
     }
-
+    public void GetTotalTime()
+    {
+      if (togglTasks == null) return;
+      totalTime = 0;
+      foreach (var t in togglTasks)
+        if (t.IsChecked)
+          totalTime += t.Duration;
+      OnPropertyChanged("TotalTimeStr");
+    }
+    public void GetTotalTimeAdjusted()
+    {
+      if (togglTasks == null) return;
+      totalTimeAdjusted = 0;
+      foreach (var t in togglTasks)
+        if (t.IsChecked)
+          totalTimeAdjusted += t.Adjusted;
+      OnPropertyChanged("TotalTimeAdjustedStr");
+    }
   }
 }

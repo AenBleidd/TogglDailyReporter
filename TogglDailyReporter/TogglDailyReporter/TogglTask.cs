@@ -12,11 +12,50 @@ namespace TogglDailyReporter
     private long duration;
     private long adjusted;
     private bool isChecked;
+    private object viewModel;
+
+    public static string ConvertTime(long time)
+    {
+      int seconds = Convert.ToInt32(time);
+      int hours = seconds / 3600;
+      seconds -= (hours * 3600);
+      int minutes = seconds / 60;
+      seconds -= (minutes * 60);
+      if (seconds != 0)
+        minutes += 1;
+      return Convert.ToString(hours) + "h " + Convert.ToString(minutes) + "m";
+    }
 
     public string Name
     {
       get { return name; }
       set { name = value; }
+    }
+    public string DurationStr
+    {
+      get { return ConvertTime(Duration); }
+    }
+    public string AdjustedStr
+    {
+      get { return ConvertTime(Adjusted); }
+    }
+    public bool IsChecked
+    {
+      get { return isChecked; }
+      set
+      {
+        if (isChecked == value) return;
+        isChecked = value;
+        var vm = viewModel as ReportViewModel;
+        if (vm == null) return;
+        vm.GetTotalTime();
+        vm.GetTotalTimeAdjusted();
+      }
+    }
+    public string ProjectName
+    {
+      get { return projectName; }
+      set { projectName = value; }
     }
     public long Duration
     {
@@ -28,32 +67,23 @@ namespace TogglDailyReporter
       get { return adjusted; }
       set { adjusted = value; }
     }
-    public bool IsChecked
-    {
-      get { return isChecked; }
-      set { isChecked = value; }
-    }
-    public string ProjectName
-    {
-      get { return projectName; }
-      set { projectName = value; }
-    }
 
-    public TogglTask(string taskName, string project, List<TimeEntry> entries)
+    public TogglTask(string taskName, string project, List<TimeEntry> entries, object viewModel)
     {
+      this.viewModel = viewModel;
       Name = taskName;
       projectName = project;
-      duration = 0;
+      Duration = 0;
       timeEntries = new List<TimeEntry>();
       foreach (var e in entries)
       {
         if (e.Description == taskName && e.Duration != null)
         {
-          duration += Convert.ToInt64(e.Duration);
+          Duration += Convert.ToInt64(e.Duration);
           timeEntries.Add(e);
         }
       }
-      adjusted = duration;
+      Adjusted = Duration;
       isChecked = true;
     }
 

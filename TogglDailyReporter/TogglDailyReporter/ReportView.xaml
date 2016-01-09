@@ -95,11 +95,6 @@
           Text="{Binding WorkHours, Mode=TwoWay}"
          />
       </Grid>
-      <Calendar
-        Margin="0, 5, 0, 0"
-        Grid.Row="3"
-        SelectedDate="{Binding SelectedDate, Mode=TwoWay}"
-        />
       <Label
         Grid.Row="1"
         Content="Projects"
@@ -124,9 +119,18 @@
       Margin="5, 0, 0, 0"
       Grid.Column="1"
       >
+      <Grid.RowDefinitions>
+        <RowDefinition
+          Height="*"
+          />
+        <RowDefinition
+          Height="auto"
+          />
+      </Grid.RowDefinitions>
       <ListView
         ItemsSource="{Binding TogglTasks, Mode=TwoWay}"
         HorizontalContentAlignment="Stretch"
+        Grid.Row="0"
         >
         <ListView.ItemTemplate>
           <DataTemplate>
@@ -134,9 +138,6 @@
               <Grid.ColumnDefinitions>
                 <ColumnDefinition
                   Width="*"
-                  />
-                <ColumnDefinition
-                  Width="auto"
                   />
                 <ColumnDefinition
                   Width="auto"
@@ -153,23 +154,82 @@
                 />
               <Label
                 Grid.Column="1"
-                Content="{Binding ProjectName, Mode=TwoWay}"
+                Content="{Binding DurationStr, Mode=OneWay}"
                 VerticalAlignment="Center"
                 />
               <Label
                 Grid.Column="2"
-                Content="{Binding Duration, Mode=TwoWay}"
-                VerticalAlignment="Center"
-                />
-              <Label
-                Grid.Column="3"
-                Content="{Binding Adjusted, Mode=TwoWay}"
+                Content="{Binding AdjustedStr, Mode=OneWay}"
                 VerticalAlignment="Center"
                 />
             </Grid>
           </DataTemplate>
         </ListView.ItemTemplate>
       </ListView>
+      <Grid
+        Grid.Row="1"
+        >
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition
+            Width="auto"
+            />
+          <ColumnDefinition
+            Width="*"
+            />
+        </Grid.ColumnDefinitions>
+        <Calendar
+          Grid.Column="0"
+          SelectedDate="{Binding SelectedDate, Mode=TwoWay}"
+          />
+        <Grid
+          Grid.Column="1"
+          >
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition
+              Width="*"
+              />
+            <ColumnDefinition
+              Width="auto"
+              />
+          </Grid.ColumnDefinitions>
+          <Grid.RowDefinitions>
+            <RowDefinition
+              Height="auto"
+              />
+            <RowDefinition
+              Height="auto"
+              />
+            <RowDefinition
+              Height="*"
+              />
+            <RowDefinition
+              Height="auto"
+              />
+          </Grid.RowDefinitions>
+          <Label
+            Grid.Column="0"
+            Grid.Row="0"            
+            Content="Total time: "
+            HorizontalContentAlignment="Right"
+            />
+          <Label
+            Grid.Column="1"
+            Grid.Row="0"
+            Content="{Binding TotalTimeStr, Mode=OneWay}"
+            />
+          <Label
+            Grid.Column="0"
+            Grid.Row="1"
+            Content="Total adjusted time: "
+            HorizontalContentAlignment="Right"
+            />
+          <Label
+            Grid.Column="1"
+            Grid.Row="1"
+            Content="{Binding TotalTimeAdjustedStr}"
+            />
+        </Grid>
+      </Grid>
     </Grid>
   </Grid>
 </UserControl>

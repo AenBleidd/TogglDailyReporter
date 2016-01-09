@@ -8,6 +8,7 @@ namespace TogglDailyReporter
     private string name;
     private int? id;
     private bool isChecked;
+    private object viewModel;
 
     public string Name
     {
@@ -22,15 +23,23 @@ namespace TogglDailyReporter
     public bool IsChecked
     {
       get { return isChecked; }
-      set { isChecked = value; }
+      set
+      {
+        if (isChecked == value) return;
+        isChecked = value;
+        var vm = viewModel as ReportViewModel;
+        if (vm == null) return;
+        vm.GetTasks(false);
+      }
     }
 
-    public TogglProject(Project project)
+    public TogglProject(Project project, object viewModel)
     {
+      this.viewModel = viewModel;
       this.project = project;
       name = project.Name;
       id = project.Id;
-      isChecked = false;
+      isChecked = true;
     }
   }
 }
