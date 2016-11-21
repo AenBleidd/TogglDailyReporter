@@ -192,11 +192,6 @@ namespace TogglDailyReporter
     }
     public void GetTotalTimeAdjusted()
     {
-      if (togglTasks == null) return;
-      totalTimeAdjusted = 0;
-      foreach (var t in togglTasks)
-        if (t.IsChecked)
-          totalTimeAdjusted += t.Adjusted;
       totalTimeAdjusted = TogglTask.AdjustTime(totalTime);
       OnPropertyChanged("TotalTimeAdjustedStr");
     }
