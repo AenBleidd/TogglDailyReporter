@@ -135,7 +135,7 @@ namespace TogglDailyReporter
           var pr = new List<long>();
           foreach (var t in e)
           {
-            if (t.Description != string.Empty && !d.ContainsKey(t.Description))
+            if (t.Description != string.Empty && t.Description != null && !d.ContainsKey(t.Description) && t.Duration > 0)
             {
               string project = string.Empty;
               bool bChecked = false;
@@ -197,6 +197,7 @@ namespace TogglDailyReporter
       foreach (var t in togglTasks)
         if (t.IsChecked)
           totalTimeAdjusted += t.Adjusted;
+      totalTimeAdjusted = TogglTask.AdjustTime(totalTime);
       OnPropertyChanged("TotalTimeAdjustedStr");
     }
     private string GetReport()

@@ -89,7 +89,15 @@ namespace TogglDailyReporter
     }
     public void Adjust(long seconds = 30 * 60)
     {
-      Adjusted += (seconds - Adjusted % seconds);
+      Adjusted = AdjustTime(Adjusted, seconds);
+    }
+    public static long AdjustTime(long exact, long seconds = 30 * 60)
+    {
+      var adjustedSeconds = (seconds - exact % seconds);
+      if (adjustedSeconds <= seconds / 2)
+        return (exact += adjustedSeconds);
+      else
+        return (exact -= seconds - adjustedSeconds);
     }
 
   }
